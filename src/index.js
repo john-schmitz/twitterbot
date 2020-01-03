@@ -1,21 +1,14 @@
-require('dotenv-safe').config();
-const clinet = require("./twitter");
+const config = require("./config");
 const app = require('./app');
-const fetch = require("node-fetch");
-const { startCron } = require("./cron/tweetCron");
+const twitterBot = require("./twitterBot");
 
-let fetch_and_tweet = async () => {
-    let res = await fetch('https://uselessfacts.jsph.pl/random.json?language=en');
-    let json = await res.json();
+app.listen(config.PORT, () => {
+  twitterBot.startCron();
+  console.log(`running on port ${config.PORT}`);
+});
 
-    await clinet.tweet(json.text);
-    response.json({message: json.text});
-};
-
-startCron(fetch_and_tweet);
-
-app.listen(process.env.PORT || 5500);
-
-app.get('/', (req,res) => {
-    res.json({message: "Hello!"});
+app.get('/', async (req, res) => {
+  res.json({
+    message: "Hello!"
+  });
 })
