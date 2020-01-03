@@ -2,7 +2,7 @@ require('dotenv-safe').config();
 const clinet = require("./twitter");
 const app = require('./app');
 const fetch = require("node-fetch");
-let CronJob = require('cron').CronJob;
+const { startCron } = require("./cron/tweetCron");
 
 let fetch_and_tweet = async () => {
     let res = await fetch('https://uselessfacts.jsph.pl/random.json?language=en');
@@ -12,9 +12,7 @@ let fetch_and_tweet = async () => {
     response.json({message: json.text});
 };
 
-new CronJob('0 15 * * *', function() {
-    fetch_and_tweet();
-  }, null, true, 'America/Sao_Paulo');
+startCron(fetch_and_tweet);
 
 app.listen(process.env.PORT || 5500);
 
